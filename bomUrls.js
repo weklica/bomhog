@@ -1,7 +1,9 @@
-module.exports = [
-	{ chapter: 1, book: 'bofm-title', url: 'https://www.lds.org/scriptures/bofm/bofm-title?lang='},
-	{ chapter: 1, book: 'introduction', url: 'https://www.lds.org/scriptures/bofm/introduction?lang='},
-	{ chapter: 1, book: 'explanation', url: 'https://www.lds.org/scriptures/bofm/explanation?lang='},
+module.exports = {
+nav:'https://www.lds.org/scriptures/bofm?lang=',
+title: 'https://www.lds.org/scriptures/bofm/bofm-title?lang=',
+introduction: 'https://www.lds.org/scriptures/bofm/introduction?lang=',
+explanation: 'https://www.lds.org/scriptures/bofm/explanation?lang=',
+chapters: [
 	{ chapter: 1, book: '1-ne', url: 'https://www.lds.org/scriptures/bofm/1-ne/1?lang='},
 	{ chapter: 2, book: '1-ne', url: 'https://www.lds.org/scriptures/bofm/1-ne/2?lang='},
 	{ chapter: 3, book: '1-ne', url: 'https://www.lds.org/scriptures/bofm/1-ne/3?lang='},
@@ -241,4 +243,4 @@ module.exports = [
 	{ chapter: 8, book: 'moro', url: 'https://www.lds.org/scriptures/bofm/moro/8?lang='},
 	{ chapter: 9, book: 'moro', url: 'https://www.lds.org/scriptures/bofm/moro/9?lang='},
 	{ chapter: 10, book: 'moro', url: 'https://www.lds.org/scriptures/bofm/moro/10?lang='}
-];
+]};
