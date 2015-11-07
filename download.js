@@ -10,8 +10,18 @@ if (!language) {
 	process.exit();
 }
 
+var useProxy = process.argv[3] && process.argv[3] == '-proxy';
+
+function createRequest(url) {
+	return {
+    	method: "GET",
+    	uri: url,
+    	proxy: useProxy ? "http://127.0.0.1:8888" : undefined
+	};
+}
+
 console.log('Requesting nav data');
-request(bomUrls.nav + language, function (error, response, body) {
+request(createRequest(bomUrls.nav + language), function (error, response, body) {
   if (!error && response.statusCode == 200) {
 	console.log('\tGot nav data');
     fileWriter('html', language, null, 'nav.html', body);
@@ -22,7 +32,7 @@ request(bomUrls.nav + language, function (error, response, body) {
 });
 
 console.log('Requesting title page data ' + bomUrls.title + language);
-request(bomUrls.title + language, function(error, response, body) {
+request(createRequest(bomUrls.title + language), function(error, response, body) {
 	if (!error && response.statusCode == 200) {
 		console.log('\tGot title page data');
 		fileWriter('html', language, 'bofm-title', '1.html', body);
@@ -34,7 +44,7 @@ request(bomUrls.title + language, function(error, response, body) {
 
 
 console.log('Requesting introduction page data ' + bomUrls.introduction + language);
-request(bomUrls.introduction + language, function(error, response, body) {
+request(createRequest(bomUrls.introduction + language), function(error, response, body) {
 	if (!error && response.statusCode == 200) {
 		console.log('\tGot introduction page data');
 		fileWriter('html', language, 'introduction', '1.html', body);
@@ -46,7 +56,7 @@ request(bomUrls.introduction + language, function(error, response, body) {
 
 
 console.log('Requesting explanation page data ' + bomUrls.explanation + language);
-request(bomUrls.explanation + language, function(error, response, body) {
+request(createRequest(bomUrls.explanation + language), function(error, response, body) {
 	if (!error && response.statusCode == 200) {
 		console.log('\tGot explanation response');
 		fileWriter('html', language, 'explanation', '1.html', body);
@@ -59,10 +69,13 @@ request(bomUrls.explanation + language, function(error, response, body) {
 
 bomUrls.chapters.forEach(function(element) {
 	console.log('Requesting chapter ' + element.url + language);
-	request(element.url + language, function(error, response, body) {
+	request(createRequest(element.url + language), function(error, response, body) {
 		if (!error && response.statusCode == 200) {
 			console.log('\tGot response for ' + element.url);
 			fileWriter('html', language, element.book, element.chapter + '.html', body);
+		} else {
+			console.log('Failed: ' + element.url + language);
+			console.log('\t' + error, response.statusCode);
 		}
 	});
 });
