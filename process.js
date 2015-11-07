@@ -148,7 +148,7 @@ bomUrls.chapters.forEach(function(element, index) {
 				page.nextNo = 1;
 			} else {
 				page.nextAbbr = bomUrls.chapters[index + 1].book;
-				page.nextNo = bomUrls.chapters[index + 1].book;
+				page.nextNo = bomUrls.chapters[index + 1].chapter;
 			}
 
 			page.chapterTitle = $('#details ul.filed-under:first-child > li:nth-child(4)').text().replace(/\s+/g, ' ').trim();

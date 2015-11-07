@@ -26,7 +26,7 @@ request(createRequest(bomUrls.nav + language), function (error, response, body) 
 	console.log('\tGot nav data');
     fileWriter('html', language, null, 'nav.html', body);
   } else {
-	  console.log(error, response.statusCode);
+	  console.log(error, response ? response.statusCode : '');
 	  process.exit();
   }
 });
@@ -37,7 +37,7 @@ request(createRequest(bomUrls.title + language), function(error, response, body)
 		console.log('\tGot title page data');
 		fileWriter('html', language, 'bofm-title', '1.html', body);
 	} else {
-		console.log(error, response.statusCode);
+		console.log(error, response ? response.statusCode : '');
 		process.exit();
 	}
 });
@@ -49,7 +49,7 @@ request(createRequest(bomUrls.introduction + language), function(error, response
 		console.log('\tGot introduction page data');
 		fileWriter('html', language, 'introduction', '1.html', body);
 	} else {
-		console.log(error, response.statusCode);
+		console.log(error, response ? response.statusCode : '');
 		process.exit();
 	}
 });
@@ -61,7 +61,7 @@ request(createRequest(bomUrls.explanation + language), function(error, response,
 		console.log('\tGot explanation response');
 		fileWriter('html', language, 'explanation', '1.html', body);
 	} else {
-		console.log(error, response.statusCode);
+		console.log(error, response ? response.statusCode : '');
 		process.exit();
 	}
 });
@@ -75,7 +75,7 @@ bomUrls.chapters.forEach(function(element) {
 			fileWriter('html', language, element.book, element.chapter + '.html', body);
 		} else {
 			console.log('Failed: ' + element.url + language);
-			console.log('\t' + error, response.statusCode);
+			console.log('\t' + error, response ? response.statusCode : '');
 		}
 	});
 });
