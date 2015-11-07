@@ -163,7 +163,8 @@ bomUrls.chapters.forEach(function(element, index) {
 			vNo = 1;
 			$('#0 p').each(function() {
 				$(this).find('a.bookmark-anchor,span.verse,sup').remove();
-				page.verses.push({ vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim() });
+				var customVerseNumber = $(this).find('span.verse').text();
+				page.verses.push({ vNo: customVerseNumber || vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim() });
 			});
 			
 			fileWriter('json', language, element.book, element.chapter + '.json', JSON.stringify(page));
