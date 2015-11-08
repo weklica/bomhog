@@ -63,11 +63,7 @@ fs.readFile(path.join(readDir, 'bofm-title', '1.json'), function(error, data) {
 		if (!json.verses || (json.verses.length != 5 && json.verses.length != 4)) logError('Expected 4 or 5 verses in bofm-title/1.json, found ' + (json.verses ? json.verses.length : '?'));
 		
 		if (!json.verses[0].isHeader) logError('Expected first verse of bofm-title/1.json to be isHeader, found otherwise');
-		
-		json.verses.forEach(function(verse, index) {
-			if (!verse.hideNumber) logError('Expected verse number in bofm-title/1.json to be hidden, found ' + verse.vNo);
-		});
-		
+				
 		logSuccess('Verified bofm-title/1.json');
 	} else {
 		logError(error);
@@ -92,10 +88,6 @@ fs.readFile(path.join(readDir, 'introduction', '1.json'), function(error, data) 
 			if (json.verses[16].length > 20) logError('Expected seventeenth verse of introduction/1.json to be short (Christian Whitmer), found length ' + json.verses[16].length);
 			if (json.verses[24].length > 40) logError('Expected twenty-fifth verse of introduction/1.json to be short ("Testimony of the prophet..."), found length ' + json.verses[24].length);
 		}
-		
-		json.verses.forEach(function(verse, index) {
-			if (!verse.hideNumber) logError('Expected verse number in introduction/1.json to be hidden, found ' + verse.vNo);
-		});
 		logSuccess('Verified introduction/1.json');
 	} else {
 		logError(error);
@@ -112,10 +104,7 @@ fs.readFile(path.join(readDir, 'explanation', '1.json'), function(error, data) {
 		if (json.nextNo != 1) logError('Expected 1 as nextNo in explanation/1.json, found ' + json.nextNo);
 		if (!json.chapterTitle) logError('Expected chapterTitle in explanation/1.json, found nothing');
 		if (!json.verses || json.verses.length > 10 || json.verses.length < 8) logError('Expected 8 to 10 verses in explanation/1.json, found ' + (json.verses ? json.verses.length : '?'));
-		
-		json.verses.forEach(function(verse, index) {
-			if (!verse.hideNumber) logError('Expected verse number in explanation/1.json to be hidden, found ' + verse.vNo);
-		});
+
 		logSuccess('Verified explanation/1.json');
 	} else {
 		logError(error);

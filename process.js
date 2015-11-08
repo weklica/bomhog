@@ -48,10 +48,10 @@ titlePage.prevNo = 1,
 titlePage.nextNo = 1,
 titlePage.chapterTitle = $('h1 .dominant').text();
 titlePage.verses = [];
-titlePage.verses.push({ vNo: 1, txt: $('#primary .subtitle').text(), isHeader: true, hideNumber: true });
-vNo = 2;
+titlePage.verses.push({ txt: $('#primary .subtitle').text(), isHeader: true });
+
 $('#0 p').each(function() {
-	verse = {vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true};
+	verse = { txt: $(this).text().replace(/\s+/g, ' ').trim() };
 	titlePage.verses.push(verse);
 });	
 
@@ -69,8 +69,6 @@ var introPage = {
 	prevNo: 1,
 	nextNo: 1,
 	chapterTitle: $('#details ul.filed-under > li:last-child').text().trim(),
-	prevTitle: $('#details ul.prev-next li.prev').first().text().trim(),
-	nextTitle: $('#details ul.prev-next li.next').first().text().trim(),
 	verses: []				
 };
 
@@ -81,10 +79,12 @@ $('#0').find('p,div>h2,.signature,.smallCaps').each(function() {
 			// a few languages have all signatures in the same element, using <br> to separate
 			var split = $(this).html().split('<br>');
 			for (var i = 0; i < split.length; i++) {
-				introPage.verses.push({vNo: vNo++, txt: split[i].replace(/\s+/g, ' ').trim(), hideNumber: true });
+				introPage.verses.push({ txt: split[i].replace(/\s+/g, ' ').trim() });
+				vNo++;
 			}
 		} else if ($(this).find('.signature,.smallCaps').length == 0) {
-			introPage.verses.push({vNo: vNo++, txt:$(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true});
+			introPage.verses.push({ txt:$(this).text().replace(/\s+/g, ' ').trim()});
+			vNo++;
 		}
 	}
 });
@@ -93,25 +93,25 @@ $('#0').find('p,div>h2,.signature,.smallCaps').each(function() {
 if (['chk','eng','hin','kos','mah','pes','por','xho','zul'].indexOf(language) > -1) {
 	var three = fs.readFileSync(path.join(readDir, 'three', '1.html'), {encoding: 'utf-8'});
 	$ = cheerio.load(three);
-	introPage.verses.push({vNo: vNo++, txt: $('h1').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
-	introPage.verses.push({vNo: vNo++, txt: $('#0 p:first-child').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	introPage.verses.push({ txt: $('h1').text().replace(/\s+/g, ' ').trim() });
+	introPage.verses.push({ txt: $('#0 p:first-child').text().replace(/\s+/g, ' ').trim() });
 	$('#0 div.signature').each(function() {
-		introPage.verses.push({vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+		introPage.verses.push({ txt: $(this).text().replace(/\s+/g, ' ').trim() });
 	});
 			
 	var eight = fs.readFileSync(path.join(readDir, 'eight', '1.html'), {encoding: 'utf-8'});
 	$ = cheerio.load(eight);
-	introPage.verses.push({vNo: vNo++, txt: $('h1').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
-	introPage.verses.push({vNo: vNo++, txt: $('#0 p:first-child').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	introPage.verses.push({ txt: $('h1').text().replace(/\s+/g, ' ').trim() });
+	introPage.verses.push({ txt: $('#0 p:first-child').text().replace(/\s+/g, ' ').trim() });
 	$('#0 div.signature').each(function() {
-		introPage.verses.push({vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+		introPage.verses.push({ txt: $(this).text().replace(/\s+/g, ' ').trim() });
 	});
 	
 	var js = fs.readFileSync(path.join(readDir, 'js', '1.html'), {encoding: 'utf-8'});
 	$ = cheerio.load(js);
-	introPage.verses.push({vNo: vNo++, txt: $('h1').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	introPage.verses.push({ txt: $('h1').text().replace(/\s+/g, ' ').trim() });
 	$('#0 > p').each(function() {
-		introPage.verses.push({vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+		introPage.verses.push({ txt: $(this).text().replace(/\s+/g, ' ').trim() });
 	});
 }
 	
@@ -129,14 +129,11 @@ fs.readFile(path.join(readDir, 'explanation', '1.html'), function(error, data) {
 			prevNo: 1,
 			nextNo: 1,
 			chapterTitle: $('h1').text().replace(/\s+/g, ' ').trim(),
-			prevTitle: $('#details ul.prev-next li.prev').first().text().trim(),
-			nextTitle: $('#details ul.prev-next li.next').first().text().trim(),
 			verses: []
 		};
 		
-		vNo = 1;
 		$('#0').find('p,li').each(function() {
-			explanationPage.verses.push({vNo: vNo++, txt:$(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true});
+			explanationPage.verses.push({ txt:$(this).text().replace(/\s+/g, ' ').trim() });
 		});
 		
 		fileWriter('json', language, 'explanation', '1.json', JSON.stringify(explanationPage));
@@ -176,8 +173,6 @@ bomUrls.chapters.forEach(function(element, index) {
 			var chapterNumber = $('#details ul.filed-under:first-child > li:nth-child(5)').text();
 			if (chapterNumber.length > 0) page.chapterTitle += ' ' + chapterNumber;
 			
-			page.prevTitle = $('#details ul.prev-next li.prev').first().text().replace(/\s+/g, ' ').trim(),
-			page.nextTitle = $('#details ul.prev-next li.next').first().text().replace(/\s+/g, ' ').trim(),
 			page.verses = [];
 			
 			vNo = 1;
