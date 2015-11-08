@@ -24,84 +24,99 @@ console.log('Processing welcome.json');
 fileWriter('json', language, 'welcome', '1.json', JSON.stringify(welcomeData));
 
 var nav = [{text:"Welcome", abbr: "welcome"}];
-fs.readFile(path.join(readDir, 'nav.html'), function (error, data) {
-  if (!error) {
-	console.log('Processing nav.json');
-    $ = cheerio.load(data);
-	$('div.table-of-contents a:not([href*=illustration])').each(function() {
-		var startPos = ($(this).attr('href').indexOf('//bofm') > -1) ? 37 : 36;
-		var abbr = $(this).attr('href').substr(startPos).replace('?lang=' + language, '').replace('/1', '');
-		if (navAbbrs.indexOf(abbr) > -1) {
-			nav.push({text:$(this).text(),abbr:abbr});
+var navhtml = fs.readFileSync(path.join(readDir, 'nav.html'), {encoding: 'utf-8'});
+$ = cheerio.load(navhtml);
+$('div.table-of-contents a:not([href*=illustration])').each(function() {
+	var startPos = ($(this).attr('href').indexOf('//bofm') > -1) ? 37 : 36;
+	var abbr = $(this).attr('href').substr(startPos).replace('?lang=' + language, '').replace('/1', '');
+	if (navAbbrs.indexOf(abbr) > -1) {
+		nav.push({text:$(this).text(),abbr:abbr});
+	}
+});
+
+fileWriter('json', language, null, 'nav.json', JSON.stringify(nav));
+
+
+var bofmtitle = fs.readFileSync(path.join(readDir, 'bofm-title', '1.html'), {encoding: 'utf-8'});
+console.log('Processing bofm-title/1.json');
+$ = cheerio.load(bofmtitle);
+var titlePage = {};
+titlePage.heading = '';
+titlePage.prevAbbr = "welcome";
+titlePage.nextAbbr = "introduction";
+titlePage.prevNo = 1,
+titlePage.nextNo = 1,
+titlePage.chapterTitle = $('h1 .dominant').text();
+titlePage.verses = [];
+titlePage.verses.push({ vNo: 1, txt: $('#primary .subtitle').text(), isHeader: true, hideNumber: true });
+vNo = 2;
+$('#0 p').each(function() {
+	verse = {vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true};
+	titlePage.verses.push(verse);
+});	
+
+fileWriter('json', language, 'bofm-title', '1.json', JSON.stringify(titlePage));
+
+
+
+var intro = fs.readFileSync(path.join(readDir, 'introduction', '1.html'), {encoding: 'utf-8'});
+console.log('Processing introduction/1.json');
+$ = cheerio.load(intro);
+var introPage = {
+	heading: '',
+	prevAbbr: 'bofm-title',
+	nextAbbr: 'explanation',
+	prevNo: 1,
+	nextNo: 1,
+	chapterTitle: $('#details ul.filed-under > li:last-child').text().trim(),
+	prevTitle: $('#details ul.prev-next li.prev').first().text().trim(),
+	nextTitle: $('#details ul.prev-next li.next').first().text().trim(),
+	verses: []				
+};
+
+vNo = 1;
+$('#0').find('p,div>h2,.signature,.smallCaps').each(function() {
+	if ($(this).text().trim()) {
+		if ((vNo == 12 || vNo == 17) && ['spa','kor','zho'].indexOf(language) > -1) {
+			// a few languages have all signatures in the same element, using <br> to separate
+			var split = $(this).html().split('<br>');
+			for (var i = 0; i < split.length; i++) {
+				introPage.verses.push({vNo: vNo++, txt: split[i].replace(/\s+/g, ' ').trim(), hideNumber: true });
+			}
+		} else if ($(this).find('.signature,.smallCaps').length == 0) {
+			introPage.verses.push({vNo: vNo++, txt:$(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true});
 		}
+	}
+});
+		
+// these languages keep additional intro info separated
+if (['chk','eng','hin','kos','mah','pes','por','xho','zul'].indexOf(language) > -1) {
+	var three = fs.readFileSync(path.join(readDir, 'three', '1.html'), {encoding: 'utf-8'});
+	$ = cheerio.load(three);
+	introPage.verses.push({vNo: vNo++, txt: $('h1').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	introPage.verses.push({vNo: vNo++, txt: $('#0 p:first-child').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	$('#0 div.signature').each(function() {
+		introPage.verses.push({vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	});
+			
+	var eight = fs.readFileSync(path.join(readDir, 'eight', '1.html'), {encoding: 'utf-8'});
+	$ = cheerio.load(eight);
+	introPage.verses.push({vNo: vNo++, txt: $('h1').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	introPage.verses.push({vNo: vNo++, txt: $('#0 p:first-child').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	$('#0 div.signature').each(function() {
+		introPage.verses.push({vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true });
 	});
 	
-	fileWriter('json', language, null, 'nav.json', JSON.stringify(nav));
-  } else {
-	  console.log(error);
-	  process.exit();
-  }
-});
+	var js = fs.readFileSync(path.join(readDir, 'js', '1.html'), {encoding: 'utf-8'});
+	$ = cheerio.load(js);
+	introPage.verses.push({vNo: vNo++, txt: $('h1').text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	$('#0 > p').each(function() {
+		introPage.verses.push({vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true });
+	});
+}
+	
+fileWriter('json', language, 'introduction', '1.json', JSON.stringify(introPage));
 
-fs.readFile(path.join(readDir, 'bofm-title', '1.html'), function(error, data) {
-	if (!error) {
-		console.log('Processing bofm-title/1.json');
-		$ = cheerio.load(data);
-		var titlePage = {};
-		titlePage.heading = '';
-		titlePage.prevAbbr = "welcome";
-		titlePage.nextAbbr = "introduction";
-		titlePage.prevNo = 1,
-		titlePage.nextNo = 1,
-		titlePage.chapterTitle = $('h1 .dominant').text();
-		titlePage.verses = [];
-		titlePage.verses.push({ vNo: 1, txt: $('#primary .subtitle').text(), isHeader: true, hideNumber: true });
-		vNo = 2;
-		$('#0 p').each(function() {
-			verse = {vNo: vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true};
-			titlePage.verses.push(verse);
-		});	
-		
-		fileWriter('json', language, 'bofm-title', '1.json', JSON.stringify(titlePage));
-	} else {
-		console.log(error);
-		process.exit();
-	}
-});
-
-
-fs.readFile(path.join(readDir, 'introduction', '1.html'), function(error, data) {
-	if (!error) {
-		console.log('Processing introduction/1.json');
-		$ = cheerio.load(data);
-		var introPage = {
-			heading: '',
-			prevAbbr: 'bofm-title',
-			nextAbbr: 'explanation',
-			prevNo: 1,
-			nextNo: 1,
-			chapterTitle: $('#details ul.filed-under > li:last-child').text().trim(),
-			prevTitle: $('#details ul.prev-next li.prev').first().text().trim(),
-			nextTitle: $('#details ul.prev-next li.next').first().text().trim(),
-			verses: []				
-		};
-		
-		vNo = 1;
-		$('#0').find('p,div>h2,.signature,.smallCaps').each(function() {
-			if ($(this).text().trim()) {
-				// signature containers - leave them out
-				if ($(this).find('.signature,.smallCaps').length == 0) {
-					introPage.verses.push({vNo: vNo++, txt:$(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true});
-				}
-			}
-		});
-		
-		fileWriter('json', language, 'introduction', '1.json', JSON.stringify(introPage));
-	} else {
-		console.log(error);
-		process.exit();
-	}
-});
 
 fs.readFile(path.join(readDir, 'explanation', '1.html'), function(error, data) {
 	if (!error) {

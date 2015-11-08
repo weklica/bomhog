@@ -54,6 +54,41 @@ request(createRequest(bomUrls.introduction + language), function(error, response
 	}
 });
 
+if (['chk','eng','hin','kos','mah','pes','por','xho','zul'].indexOf(language) > -1) {
+	console.log('Requesting three page data ' + bomUrls.threeWitness + language);
+	request(createRequest(bomUrls.threeWitness + language), function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			console.log('\tGot three page data');
+			fileWriter('html', language, 'three', '1.html', body);
+		} else {
+			console.log(error, response ? response.statusCode : '');
+			process.exit();
+		}
+	});
+	
+	console.log('Requesting eight page data ' + bomUrls.eightWitness + language);
+	request(createRequest(bomUrls.eightWitness + language), function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			console.log('\tGot Eight page data');
+			fileWriter('html', language, 'eight', '1.html', body);
+		} else {
+			console.log(error, response ? response.statusCode : '');
+			process.exit();
+		}
+	});
+	
+	console.log('Requesting JS page data ' + bomUrls.jsWitness + language);
+	request(createRequest(bomUrls.jsWitness + language), function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			console.log('\tGot JS page data');
+			fileWriter('html', language, 'js', '1.html', body);
+		} else {
+			console.log(error, response ? response.statusCode : '');
+			process.exit();
+		}
+	});
+}
+
 
 console.log('Requesting explanation page data ' + bomUrls.explanation + language);
 request(createRequest(bomUrls.explanation + language), function(error, response, body) {
