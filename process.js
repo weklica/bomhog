@@ -87,10 +87,10 @@ fs.readFile(path.join(readDir, 'introduction', '1.html'), function(error, data) 
 		};
 		
 		vNo = 1;
-		$('#0').find('p,h2,.signature').each(function() {
+		$('#0').find('p,div>h2,.signature,.smallCaps').each(function() {
 			if ($(this).text().trim()) {
 				// signature containers - leave them out
-				if ($(this).find('.signature').length ==0) {
+				if ($(this).find('.signature,.smallCaps').length == 0) {
 					introPage.verses.push({vNo: vNo++, txt:$(this).text().replace(/\s+/g, ' ').trim(), hideNumber: true});
 				}
 			}
