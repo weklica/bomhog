@@ -18,6 +18,7 @@ var page = null;
 var verse = null;
 var vNo = 0;
 var readDir = path.join(__dirname, 'html', language);
+var navAbbrs = ["welcome","bofm-title","introduction","explanation","1-ne","2-ne","jacob","enos","jarom","omni","w-of-m","mosiah","alma","hel","3-ne","4-ne","morm","ether","moro"];
 
 console.log('Processing welcome.json');
 fileWriter('json', language, 'welcome', '1.json', JSON.stringify(welcomeData));
@@ -28,7 +29,11 @@ fs.readFile(path.join(readDir, 'nav.html'), function (error, data) {
 	console.log('Processing nav.json');
     $ = cheerio.load(data);
 	$('div.table-of-contents a:not([href*=illustration])').each(function() {
-		nav.push({text:$(this).text(),abbr:$(this).attr('href').substr(36).replace('?lang=' + language, '').replace('/1', '')});
+		var startPos = ($(this).attr('href').indexOf('//bofm') > -1) ? 37 : 36;
+		var abbr = $(this).attr('href').substr(startPos).replace('?lang=' + language, '').replace('/1', '');
+		if (navAbbrs.indexOf(abbr) > -1) {
+			nav.push({text:$(this).text(),abbr:abbr});
+		}
 	});
 	
 	fileWriter('json', language, null, 'nav.json', JSON.stringify(nav));
@@ -45,7 +50,7 @@ fs.readFile(path.join(readDir, 'bofm-title', '1.html'), function(error, data) {
 		var titlePage = {};
 		titlePage.heading = '';
 		titlePage.prevAbbr = "welcome";
-		titlePage.nextAbbr = "explanation";
+		titlePage.nextAbbr = "introduction";
 		titlePage.prevNo = 1,
 		titlePage.nextNo = 1,
 		titlePage.chapterTitle = $('h1 .dominant').text();
@@ -161,10 +166,11 @@ bomUrls.chapters.forEach(function(element, index) {
 			page.verses = [];
 			
 			vNo = 1;
-			$('#0 p').each(function() {
-				$(this).find('a.bookmark-anchor,span.verse,sup').remove();
+			$('#0>p').each(function() {
 				var customVerseNumber = $(this).find('span.verse').text();
-				page.verses.push({ vNo: customVerseNumber || vNo++, txt: $(this).text().replace(/\s+/g, ' ').trim() });
+				$(this).find('a.bookmark-anchor,span.verse,sup,div.signature,div.summary').remove();
+				verse = $(this).text().replace(/\s+/g, ' ').trim();
+				if (verse) page.verses.push({ vNo: customVerseNumber || vNo++, txt: verse });
 			});
 			
 			fileWriter('json', language, element.book, element.chapter + '.json', JSON.stringify(page));
