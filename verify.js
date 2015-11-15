@@ -29,7 +29,8 @@ console.log(chalk.bgBlue('Verifying ' + language));
 fs.readFile(path.join(readDir, 'nav.json'), function(error, data) {
 	if (!error) {
 		json = JSON.parse(data);
-		if (json.length != 19) logError('Expected 19 objects in nav.json, found ' + json.length);
+		if (!json.languageName) logError('Expected languageName in nav.json, found nothing');
+		if (json.books.length != 19) logError('Expected 19 objects in nav.json books, found ' + json.length);
 		logSuccess('Verified nav.json');
 	} else {
 		logError(error);

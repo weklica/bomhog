@@ -23,14 +23,14 @@ var navAbbrs = ["welcome","bofm-title","introduction","explanation","1-ne","2-ne
 console.log('Processing welcome.json');
 fileWriter('json', language, 'welcome', '1.json', JSON.stringify(welcomeData));
 
-var nav = [{text:"Welcome", abbr: "welcome"}];
 var navhtml = fs.readFileSync(path.join(readDir, 'nav.html'), {encoding: 'utf-8'});
 $ = cheerio.load(navhtml);
+var nav = {languageName: $('a.pf-prefix.pf-icon-language').text(), books: [{text:"Welcome", abbr: "welcome"}]};
 $('div.table-of-contents a:not([href*=illustration])').each(function() {
 	var startPos = ($(this).attr('href').indexOf('//bofm') > -1) ? 37 : 36;
 	var abbr = $(this).attr('href').substr(startPos).replace('?lang=' + language, '').replace('/1', '');
 	if (navAbbrs.indexOf(abbr) > -1) {
-		nav.push({text:$(this).text(),abbr:abbr});
+		nav.books.push({text:$(this).text(),abbr:abbr});
 	}
 });
 
