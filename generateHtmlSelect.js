@@ -19,10 +19,10 @@ for (var i = 0; i < languages.length; i++) {
 		dataBooks += navData.books[j].text + ',';
 	}
 	selLang1 += '\r\n\t<option value="' + languages[i] + '" data-books="' + dataBooks + '">' + navData.languageName + '</option>';
-	selLang2 += '\r\n\t<option value="' + languages[i] + '"></option>';
+	selLang2 += '\r\n\t<option value="' + languages[i] + '">' + navData.languageName + '</option>';
 }
 
-selLang1 += '\r\n</option>';
-selLang2 += '\r\n</option>';
+selLang1 += '\r\n</select>';
+selLang2 += '\r\n</select>';
 
 fs.writeFileSync(path.join(__dirname, 'select.html'), selLang1 + selLang2, 'utf-8');
